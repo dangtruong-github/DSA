@@ -56,6 +56,7 @@ int main() {
                 firstNode = currentNode;
             } else {
                 cout << "First node's string:" << firstNode.valueString << "\n";
+                cout << "First node's next node's address:" << firstNode.next << "\n";
                 cout << "First node's next node's string: " << (*firstNode.next).valueString << "\n";
             }
 
