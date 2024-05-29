@@ -6,13 +6,14 @@
 using namespace std;
 
 const long long VAL = 1e5 + 3; 
+const long long MAX_INT = 1e7 + 7;
 
 /* 
     Link to problem:
     https://leetcode.com/problems/get-the-maximum-score/description/
 */
 
-long long main() {
+int main() {
     long long n[2], num;
     vector<long long> nums1, nums2;
     for (long long i = 0; i < 2; i++) {
@@ -74,7 +75,7 @@ long long main() {
         //cout << "\n";
     }
 
-    cout << max(max_value[best_num_1], max_value[best_num_2]);
+    cout << max(max_value[best_num_1], max_value[best_num_2]) % MAX_INT;
 
     return 0;
 }
