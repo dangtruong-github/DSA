@@ -6,11 +6,18 @@
 
 using namespace std;
 
-int MAX = 1e6 + 7;
-int TOTAL = 1e5 + 2;
+long long MAX = 1e11 + 1;
+const long long TOTAL = 1e5 + 3;
 
-/* int getMax(map<int, vector<int, int>> &graph) {
-    int maxIndex = 0;
+vector<vector<pair<long long, long long>>> graph(TOTAL);
+vector<pair<long long, long long>> blankVec;
+bool visited[TOTAL] = {0};
+long long dist[TOTAL] = {0};
+long long before[TOTAL];
+priority_queue<pair<long long, long long>, vector<pair<long long, long long>>, greater<pair<long long, long long>>> q;
+
+/* long long getMax(map<long long, vector<long long, long long>> &graph) {
+    long long maxIndex = 0;
 
     for (auto it = graph.begin(); it != graph.end(); it++) {
         maxIndex = max((*it).first, maxIndex);
@@ -23,31 +30,31 @@ int TOTAL = 1e5 + 2;
     return maxIndex;
 }
 
-void solve(map<int, vector<int, int>> &graph, int start, int stop) {
-    // int maxNodeIndex = getMax(graph);
-    int maxNodeIndex = stop;
+void solve(map<long long, vector<long long, long long>> &graph, long long start, long long stop) {
+    // long long maxNodeIndex = getMax(graph);
+    long long maxNodeIndex = stop;
 
     // cout << "Total number of nodes: " << maxNodeIndex << "\n";
 
     bool visited[maxNodeIndex + 1] = {0};
-    int dist[maxNodeIndex + 1] = {0};
-    int before[maxNodeIndex + 1];
+    long long dist[maxNodeIndex + 1] = {0};
+    long long before[maxNodeIndex + 1];
 
-    for (int i = 0; i <= maxNodeIndex; i++) {
+    for (long long i = 0; i <= maxNodeIndex; i++) {
         dist[i] = MAX;
     }
 
-    priority_queue<pair<int, int>> q;
-    q.push(pair<int, int>(start, 0));
+    priority_queue<pair<long long, long long>> q;
+    q.push(pair<long long, long long>(start, 0));
     dist[start] = 0;
 
     while (!q.empty()) {
-        int curIndex = q.top().first;
+        long long curIndex = q.top().first;
         q.pop();
 
         for (auto it = graph[curIndex].begin(); it != graph[curIndex].end(); it++) {
-            int addIndex = (*it).first;
-            int cost = (*it).second;
+            long long addIndex = (*it).first;
+            long long cost = (*it).second;
 
             if (dist[curIndex] + cost < dist[addIndex]) {
                 before[addIndex] = curIndex;
@@ -58,7 +65,7 @@ void solve(map<int, vector<int, int>> &graph, int start, int stop) {
                 continue;
             }
 
-            q.push(pair<int, int>(addIndex, dist[addIndex]));
+            q.push(pair<long long, long long>(addIndex, dist[addIndex]));
         }
 
         visited[curIndex] = 1;
@@ -69,11 +76,11 @@ void solve(map<int, vector<int, int>> &graph, int start, int stop) {
         return;
     }
 
-    for (int i = 0; i <= maxNodeIndex; i++) {
+    for (long long i = 0; i <= maxNodeIndex; i++) {
         cout << "Node index: " << i << " with cost " << dist[i] << "\n";
     } 
 
-    int pathIndex = stop;
+    long long pathIndex = stop;
     string solPath = to_string(stop);
 
     while (pathIndex != start) {
@@ -87,7 +94,10 @@ void solve(map<int, vector<int, int>> &graph, int start, int stop) {
     return;
 } */
 
-/* auto find(vector<pair<int, vector<pair<int, int>>>> &graph, int index) {
+/*auto find(
+    //vector<pair<long long, vector<pair<long long, long long>>>> &graph,
+    long long index
+) {
     for (auto it = graph.begin(); it != graph.end(); it++) {
         if (index == (*it).first) {
             return it;
@@ -96,20 +106,29 @@ void solve(map<int, vector<int, int>> &graph, int start, int stop) {
     return graph.end();
 } */
 
+void printPath(long long index) {
+    if (index == 1) {
+        cout << 1;
+        return;
+    }
+    printPath(before[index]);
+
+    cout << " " << index;
+}
+
 
 int main() {
-    int n, m;
+    long long n, m;
     cin >> n;
     cin >> m;
 
-    vector<pair<int, int>> graph[n + 2];
-
-    int e1, e2, cost;
+    long long e1, e2, cost;
 
     while (m--) {
         cin >> e1 >> e2 >> cost;
-        graph[e1].push_back(pair<int, int>(e2, cost));
-        graph[e2].push_back(pair<int, int>(e1, cost));
+        
+        graph[e1].push_back({e2, cost});
+        graph[e2].push_back({e1, cost});
     }
 
     /* for (auto itOut = graph.begin(); itOut != graph.end(); itOut++) {
@@ -120,45 +139,40 @@ int main() {
         }
     } */
     
-    // int start, stop;
+    // long long start, stop;
     // cin >> start >> stop;
 
     // solve(graph, 1, n);
 
-    // int maxNodeIndex = n;
+    // long long maxNodeIndex = n;
 
     // cout << "Total number of nodes: " << maxNodeIndex << "\n";
 
-    bool visited[n + 1] = {0};
-    int dist[n + 1] = {0};
-    int before[n + 1];
-
-    for (int i = 0; i <= n; i++) {
+    for (long long i = 0; i <= n; i++) {
         dist[i] = MAX;
     }
 
-    priority_queue<pair<int, int>> q;
-    q.push(pair<int, int>(1, 0));
+    q.push({0, 1});
     dist[1] = 0;
 
     while (!q.empty()) {
-        int curIndex = q.top().first;
+        long long curIndex = q.top().second;
+        long long curDist = q.top().first;
         q.pop();
 
         for (auto it = graph[curIndex].begin(); it != graph[curIndex].end(); it++) {
-            int addIndex = (*it).first;
-            int cost = (*it).second;
-
-            if (dist[curIndex] + cost < dist[addIndex]) {
-                before[addIndex] = curIndex;
-            } 
-            dist[addIndex] = min(dist[curIndex] + cost, dist[addIndex]);
+            long long addIndex = (*it).first;
+            long long cost = (*it).second;
 
             if (visited[addIndex]) {
                 continue;
             }
-            
-            q.push(pair<int, int>(addIndex, dist[addIndex]));
+
+            if (dist[curIndex] + cost < dist[addIndex]) {
+                before[addIndex] = curIndex;
+                dist[addIndex] = dist[curIndex] + cost;
+                q.push({dist[addIndex], addIndex});
+            } 
         }
 
         visited[curIndex] = 1;
@@ -169,20 +183,15 @@ int main() {
         return 0;
     }
 
-    /* for (int i = 0; i <= maxNodeIndex; i++) {
+    /* for (long long i = 0; i <= maxNodeIndex; i++) {
         cout << "Node index: " << i << " with cost " << dist[i] << "\n";
     } */
 
-    int pathIndex = n;
-    string solPath = to_string(n);
-
-    while (pathIndex != 1) {
-        pathIndex = before[pathIndex];
-        solPath = to_string(pathIndex) + " " + solPath;
-    }
+    long long pathIndex = n;
+    printPath(pathIndex);
 
     // cout << "Solution path: " << solPath;
-    cout << solPath;
+    // cout << solPath;
 
     return 0;
 }
