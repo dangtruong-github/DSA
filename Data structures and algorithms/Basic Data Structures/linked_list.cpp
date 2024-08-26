@@ -6,67 +6,90 @@ using namespace std;
 
 
 struct Node {
-    Node* next;
-    char* valueString;
+    Node* next = nullptr;
+    char* valueString = nullptr;
 };
 
-Node getNodeById (int id, Node first) {
-    int cur_id = 1;
-    while (cur_id < id) {
-        if (first.next == NULL) {
-            cout << "The id you requested is greater than the length of this linked list\n";
-            return *first.next;
+
+class LinkedList {
+    Node* head;
+
+    public:
+        LinkedList () {
+            head = nullptr;
+        };
+
+        void addToHead(char* data) {
+            Node* toAdd = new Node();
+            
+            toAdd->valueString = data;
+
+            toAdd->next = head;
+            head = toAdd;
+            this->printLL();
+        };
+
+        void addToHead(string data) {
+            Node* toAdd = new Node();
+            
+            toAdd->valueString = new char[data.length() + 1];
+            strncpy(toAdd->valueString, data.c_str(), data.length());
+            toAdd->valueString[data.length()] = '\0';
+            
+            toAdd->next = head;
+            head = toAdd;
+            this->printLL();
+        };
+
+        Node getNodeById (int id) {
+            Node* now = head;
+            int cur_id = 1;
+            while (cur_id <= id) {
+                if (now == NULL) {
+                    cout << "The id you requested is greater than the length of this linked list\n";
+                    return *now;
+                }
+                
+                cout << "Current node id: " << cur_id << "\n";
+                cout << "Current node value: " << now->valueString << endl;
+
+                now = now->next;
+                cur_id++;
+            }
+
+            cout << now->valueString << "\n";
+
+            return *now;
+        };
+
+        void printLL () {
+            Node* now = head;
+            int cur_id = 1;
+            while (now != NULL) {
+                
+                cout << "Current node id: " << cur_id << "\n";
+                cout << "Current node value: " << now->valueString << endl;
+
+                now = now->next;
+                cur_id++;
+            }
         }
-        
-        cout << "Current node id: " << cur_id << "\n";
-        cout << "Current node value: " << first.valueString << endl;
-
-        first = *first.next;
-        cur_id++;
-    }
-
-    cout << first.valueString << "\n";
-
-    return first;
-}
+};
 
 int main() {
     int n;
     string inputString;
     cin >> n;
 
-    Node firstNode;
-    firstNode.next = nullptr; // Initialize next pointer
-    Node currentNode;
+    LinkedList lk;
 
     for (int i = 0; i < n; i++) {
         cin >> inputString;
 
-        currentNode.valueString = new char[inputString.length() + 1];
-        strncpy(currentNode.valueString, inputString.c_str(), inputString.length());
-        currentNode.valueString[inputString.length()] = '\0';
-
-        cout << "Input string: " << inputString << endl;
-        cout << "Node string: " << currentNode.valueString << endl;
-
-        if (i < n - 1) {
-            currentNode.next = new Node();
-            
-            if (i == 0) {
-                firstNode = currentNode;
-            } else {
-                cout << "First node's string:" << firstNode.valueString << "\n";
-                cout << "First node's next node's address:" << firstNode.next << "\n";
-                cout << "First node's next node's string: " << (*firstNode.next).valueString << "\n";
-            }
-
-            currentNode = *currentNode.next;
-        }
-    }  
-
-    cout << "Create success\n";
-
-    getNodeById(n + 1, firstNode);
+        lk.addToHead(inputString);
+    }
+    
+    lk.getNodeById(n+1);
 
     return 0;
 }
